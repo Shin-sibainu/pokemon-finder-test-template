@@ -9,25 +9,16 @@ const PokemonFinder = () => {
   const [error, setError] = useState("");
 
   const fetchPokemonById = async () => {
-    if (!pokemonId) {
-      setError("ポケモンのIDを入力してください。");
+    setError("");
+    const response = await fetch(
+      `https://pokeapi.co/api/v2/pokemon/${pokemonId}`
+    );
+    if (!response.ok) {
+      setError("ポケモンのデータが見つかりません。");
       return;
     }
-    setError("");
-    try {
-      const response = await fetch(
-        `https://pokeapi.co/api/v2/pokemon/${pokemonId}`
-      );
-      if (!response.ok) {
-        setError("ポケモンのデータが見つかりません。");
-        return;
-      }
-      const data = await response.json();
-      setPokemon({ name: data.name, image: data.sprites.front_default });
-    } catch (error) {
-      console.error("Fetch error:", error);
-      setError("データの取得中にエラーが発生しました。");
-    }
+    const data = await response.json();
+    setPokemon({ name: data.name, image: data.sprites.front_default });
   };
 
   return (
